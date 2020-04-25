@@ -10,11 +10,12 @@ TEST_PATH = '/home/ralleking/Downloads/clean_midi/ABBA/Honey Honey.mid'
 #------ pre-processing ------#
 
 #Take the song specified in TEST_PATH, converts to chunks, then trains the lstm
-#using these chunks as input data. We can create more traininng data by looping
-#through all songs and stacking them on x_data, y_data lists.
+#using these chunks as input data. We can create more training data by looping
+#through all songs and stacking them on the data tuple-list. Shuffling and
+#splitting this list yields a training/test set when incorporating more songs.
 
 #Note that the input dimensions to split_song defines our problem. I have
-#arbitrarily selected 20 and 5 as the timesteps (e.g. how many columns/input steps
+#arbitrarily selected 20 as the timesteps (e.g. how many columns/input steps
 #do we base our prediction on) and 5 (number of time steps we try to predict)
 
 midi = load_midi(TEST_PATH)
