@@ -16,6 +16,12 @@ def load_midi(path): #Load midi file
     mid = mido.MidiFile(path)
     return mid
 
+def get_midi_paths(dir):
+    raw_midis = []
+    for filename in os.listdir(dir):
+        raw_midis.append(dir + filename)
+    return raw_midis
+
 def bpm_to_tempo(bpm): #Converts tempo in beats/minute to microseconds/beat
     return (60000000/bpm)
 
@@ -52,17 +58,26 @@ def notes_to_vectors(mid):  #Returns vector set of played notes in the format [n
     time_passed = 0
     i = 0
     pitch_classes = generate_pitch_classes()
-    for msg in mid.tracks[1]:
-        time_passed += msg.time
-        if msg.type == 'note_on':
-            pitch_class = note_to_pitchclass(msg.note,pitch_classes)
-            vector = np.vstack((msg.note,msg.velocity, msg.time,pitch_class))
-            if i == 0:
-                input_seq = vector
-            else:
-                input_seq = np.hstack((input_seq,vector))
-            i += 1
-    return input_seq
+    input_seq = None
+    try:
+        for msg in mid.tracks[1]:
+            time_passed += msg.time
+            if msg.type == 'note_on':
+                pitch_class = note_to_pitchclass(msg.note,pitch_classes)
+                #smells like teen spirit exempel
+                assert pitch_class is not None
+                vector = np.vstack((msg.note,msg.velocity, msg.time,pitch_class))
+                #make None to 0
+                vector = np.where(vector == np.array(None), float(0), vector)
+                if i == 0:
+                    input_seq = vector
+                else:
+                    input_seq = np.hstack((input_seq,vector))
+                i += 1
+        return input_seq
+    except Exception as e:
+        print("Could not import song, error: " + str(e))
+        return None
 
 def split_song(vectorized_song, time_steps=20, prediction_length=5):
     #Should return a list of tuple where the tuple elements are pytorch tensors.
