@@ -1,11 +1,11 @@
-from pre_processing_draft import *
+from pre_processing_edit_draft import *
 from baseline import Baseline
 import random
 import torch
 import torch.nn as nn
 
 
-MIDI_DIR = './TEST_OK/'
+MIDI_DIR = '/home/ralleking/Code/Python/DeepDIVA/Baseline/TEST_OK/'
 
 #------ pre-processing ------#
 
