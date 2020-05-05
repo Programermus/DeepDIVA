@@ -103,7 +103,7 @@ vocab,vocab_vectors = import_vocab('nesmdb_tx1/vocab.txt') # import vocabulary
 DATA = generate_trainset_data()# WARNING: THIS CONSUMES TIME!
 
 print(len(DATA),len(DATA[-1])) 
-X_tensor,Y_tensor = split_DATA(DATA)
+X_tensor,Y_tensor = split_DATA(DATA) # this dont work :(
 
 
         
