@@ -1,4 +1,5 @@
 import torch.nn as nn
+import torch.nn.functional as F
 import torch
 
 class Baseline(nn.Module):
@@ -6,20 +7,19 @@ class Baseline(nn.Module):
     Simple baseline lstm model
     """
 
-    def __init__(self, time_steps, prediction_length):
+    def __init__(self, time_steps, hidden_dim, num_classes):
 
         super(Baseline, self).__init__()
-        self.prediction_length = prediction_length
+        self.hidden_dim = hidden_dim
 
         #lstm layer
-        self.lstm = nn.LSTM(time_steps, prediction_length)
-        self.hidden_cell = (torch.zeros(1,1,self.prediction_length), torch.zeros(1,1,self.prediction_length))
+        self.lstm = nn.LSTM(time_steps, hidden_dim)
 
         #output layer
-        self.linear = nn.Linear(prediction_length, prediction_length)
+        self.linear = nn.Linear(hidden_dim, num_classes)
 
 
     def forward(self, input):
-        lstm_out, self.hidden_cell = self.lstm(input.view(len(input) ,1 , -1), self.hidden_cell)
+        lstm_out, _ = self.lstm(input.view(len(input), 1, -1))
         predictions = self.linear(lstm_out.view(len(input), -1))
-        return predictions[-1]
+        return predictions[-1].view(1,-1)
