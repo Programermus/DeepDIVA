@@ -77,4 +77,28 @@ def sample_song(vectorized_song, n=1, sample_size=(5,1)):
     #make into pytorch tensors
     x, y = torch.from_numpy(x).float(), torch.from_numpy(y).long()
 
+    #enable cuda if possible
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    x.to(device)
+    y.to(device)
+
     return x, y
+
+#----- Predictions ------#
+def predict_sequence(song_txt, vocab, vocab_vectors, model, prediction_length=30, prediction_start=10):
+    vectorized_song = tx1_to_vectors(song_txt, vocab, vocab_vectors)
+    song_start = np.stack(vectorized_song[prediction_start-5:prediction_start], axis=1)
+    x = torch.from_numpy(song_start).float()
+    predicted_sequence = vectorized_song[0:prediction_start]
+    for k in range(1, prediction_length+prediction_start):
+        y = model(x)
+        y = y.view(-1)
+        y = np.asarray(y.data)
+        y[np.where(y==np.max(y))] = 1
+        y[np.where(y!=1)] = 0
+        predicted_sequence.append(y)
+        y = torch.from_numpy(y).float()
+        y = y.view(1,len(y))
+        x = torch.cat((x,y.t()), 1)
+        x = x[:,-5:]
+    return predicted_sequence
