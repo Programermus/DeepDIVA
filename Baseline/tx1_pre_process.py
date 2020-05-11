@@ -79,8 +79,8 @@ def sample_song(vectorized_song, n=1, sample_size=(5,1)):
 
     #enable cuda if possible
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    x.to(device)
-    y.to(device)
+    x = x.to(device)
+    y = y.to(device)
 
     return x, y
 
