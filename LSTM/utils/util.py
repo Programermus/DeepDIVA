@@ -1,9 +1,20 @@
 import os
 import mido
+import numpy as np
 
-def test():
-    print("dsa")
-    return
+def predict_next_note(data, model):
+    #prediction
+    pred = model(data)
+    
+    #remove first entry in data
+    data = np.delete(data, 0, axis=1)
+    
+    #concatenate prediction to data
+    data = np.hstack(data, pred)
+    
+    return data
+
+
 
 def note_to_pitchclass(midi_note,pitch_classes): #Returns a vector with a 1 for the entered note
     pitch_class = [0,0,0,0,0,0,0,0,0,0,0,0]
@@ -74,3 +85,4 @@ def array_to_midi(data,root,midi_name):
 
     mid.save(midi_name)
     os.chdir(root)
+
